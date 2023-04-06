@@ -1,7 +1,10 @@
+import { GameArea, ResetBtn } from "./components";
+
 function App() {
   return (
-    <div className="App">
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
+    <div className="w-11/12 h-full mx-auto py-8 px-4 bg-slate-500 flex flex-col items-center">
+      <ResetBtn />
+      <GameArea />
     </div>
   );
 }
