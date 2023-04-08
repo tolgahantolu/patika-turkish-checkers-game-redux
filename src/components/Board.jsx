@@ -12,7 +12,8 @@ const Board = () => {
         <div key={i} className={item.className}>
           {item.isFull && (
             <div
-              className={`w-2/3 h-2/3 rounded-full cursor-pointer bg-[${item.stoneColor}]`}
+              className={`w-2/3 h-2/3 rounded-full cursor-pointer`}
+              style={{ background: item.stoneColor }}
             />
           )}
         </div>

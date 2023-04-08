@@ -13,8 +13,8 @@ verticalAxis.forEach((v, i) => {
           isFull: v === "2" || v === "3" || v === "6" || v === "7",
           stoneColor: `${
             //prettier-ignore
-            (v === "2" || v === "3" ? "#fafaf9" : "") || 
-            (v === "6" || v === "7" ? "#1c1d1c" : "")
+            (v === "2" || v === "3" ? "white" : "") || 
+            (v === "6" || v === "7" ? "black" : "")
           }`,
           isDama: false,
         })
@@ -24,8 +24,8 @@ verticalAxis.forEach((v, i) => {
           isFull: v === "2" || v === "3" || v === "6" || v === "7",
           stoneColor: `${
             //prettier-ignore
-            (v === "2" || v === "3" ? "#fafaf9" : "") || 
-            (v === "6" || v === "7" ? "#1c1d1c" : "")
+            (v === "2" || v === "3" ? "white" : "") || 
+            (v === "6" || v === "7" ? "black" : "")
           }`,
           isDama: false,
         });
