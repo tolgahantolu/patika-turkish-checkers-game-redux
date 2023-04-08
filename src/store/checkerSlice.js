@@ -13,7 +13,7 @@ const checkerSlice = createSlice({
     userBlackScore: 16,
   },
   reducers: {
-    selecStone: (state, { payload, type }) => {
+    selectStone: (state, { payload, type }) => {
       const selectedStone = payload;
       state.selectedStone = selectedStone;
       state.movableTiles = [];
@@ -30,7 +30,7 @@ const checkerSlice = createSlice({
             state.gameBoard.find((tile) => tile.id === verticalAxis[i] + hAxis)
               ?.isFull
           ) {
-            //Todo: burada isimlendirme de sıkıntı var => bg-color adı ile currentPlayer adı uyuşmuyor!
+            //Todo: 🆗 burada isimlendirme de sıkıntı var => bg-color adı ile currentPlayer adı uyuşmuyor!
             if (
               state.gameBoard.find(
                 (tile) => tile.id === verticalAxis[i] + hAxis
@@ -59,7 +59,7 @@ const checkerSlice = createSlice({
             state.gameBoard.find((tile) => tile.id === verticalAxis[i] + hAxis)
               ?.isFull
           ) {
-            //Todo: burada isimlendirme de sıkıntı var => bg-color adı ile currentPlayer adı uyuşmuyor!
+            //Todo: 🆗 burada isimlendirme de sıkıntı var => bg-color adı ile currentPlayer adı uyuşmuyor!
             if (
               state.gameBoard.find(
                 (tile) => tile.id === verticalAxis[i] + hAxis
@@ -190,9 +190,128 @@ const checkerSlice = createSlice({
             }
           }
         }
+
+        if (hAxis !== "a") {
+          const leftTile = state.gameBoard.find(
+            (tile) => tile.id === vAxis + horizontalAxis[hIndex - 1]
+          );
+          const nextTile = state.gameBoard.find(
+            (tile) => tile.id === vAxis + horizontalAxis[hIndex - 2]
+          );
+          if (leftTile?.isFull) {
+            if (
+              leftTile.stoneColor !== state.currentPlayer &&
+              !nextTile?.isFull
+            )
+              state.movableTiles.push({
+                moveTo: vAxis + horizontalAxis[hIndex - 2],
+                delete: vAxis + horizontalAxis[hIndex - 1],
+              });
+          } else
+            state.movableTiles.push({
+              moveTo: vAxis + horizontalAxis[hIndex - 1],
+              delete: "",
+            });
+        }
+
+        if (hAxis !== "h") {
+          const rightTile = state.gameBoard.find(
+            (tile) => tile.id === vAxis + horizontalAxis[hIndex + 1]
+          );
+          const nextTile = state.gameBoard.find(
+            (tile) => tile.id === vAxis + horizontalAxis[hIndex + 2]
+          );
+          if (rightTile?.isFull) {
+            if (
+              rightTile.stoneColor !== state.currentPlayer &&
+              !nextTile?.isFull
+            )
+              state.movableTiles.push({
+                moveTo: vAxis + horizontalAxis[hIndex + 2],
+                delete: vAxis + horizontalAxis[hIndex + 1],
+              });
+          } else
+            state.movableTiles.push({
+              moveTo: vAxis + horizontalAxis[hIndex + 1],
+              delete: "",
+            });
+        }
       }
+    },
+
+    moveStone: (state, { payload, type }) => {
+      const selectedTile = state.movableTiles.find(
+        (tile) => tile.moveTo === payload
+      );
+      let changePlayer = true;
+
+      state.gameBoard = state.gameBoard.map((tile) => {
+        if (tile.id === state.selectedStone) {
+          tile.isFull = false;
+          tile.stoneColor = "";
+        } else {
+          if (tile.id === selectedTile?.moveTo) {
+            tile.isFull = true;
+            tile.stoneColor = state.currentPlayer;
+            if (
+              selectedTile.moveTo.startsWith("8") ||
+              selectedTile.moveTo.startsWith("1")
+            )
+              tile.isDama = true;
+            else {
+              tile.isDama =
+                state.gameBoard.find((tile) => tile.id === state.selectedStone)
+                  ?.isDama || false;
+            }
+          } else {
+            if (tile.id === selectedTile?.delete) {
+              changePlayer = false;
+              tile.isFull = false;
+              tile.stoneColor = "";
+
+              if (state.currentPlayer === "white") {
+                if (state.userBlackScore === 1) {
+                  state.winnerPlayer = "white";
+                }
+                if (state.userBlackScore === 2 && state.userWhiteScore === 1) {
+                  state.winnerPlayer = "";
+                }
+
+                state.userBlackScore = state.userBlackScore - 1;
+              } else {
+                if (state.userWhiteScore === 1) {
+                  state.winnerPlayer = "black";
+                }
+
+                if (state.userWhiteScore === 2 && state.userBlackScore === 1) {
+                  state.winnerPlayer = "";
+                }
+
+                state.userWhiteScore = state.userWhiteScore - 1;
+              }
+            }
+          }
+        }
+
+        return tile;
+      });
+
+      state.selectedStone = "";
+      if (changePlayer) {
+        state.currentPlayer === "white"
+          ? (state.currentPlayer = "black")
+          : (state.currentPlayer = "white");
+      }
+      state.movableTiles = [];
+    },
+
+    playAgain: (state, { type, payload }) => {
+      state.gameBoard = gameBoard;
+      state.currentPlayer = "white";
+      state.userWhiteScore = 16;
     },
   },
 });
 
+export const { selectStone, moveStone, playAgain } = checkerSlice.actions;
 export default checkerSlice.reducer;
