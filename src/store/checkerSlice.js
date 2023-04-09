@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
-import gameBoard, { horizontalAxis, verticalAxis } from "./helpers/board";
+import gameBoard, { verticalAxis, horizontalAxis } from "./helpers/board";
 
-const checkerSlice = createSlice({
-  name: "checker",
+export const checkerSlice = createSlice({
+  name: "checkers",
   initialState: {
     gameBoard,
     selectedStone: "",
@@ -24,13 +24,11 @@ const checkerSlice = createSlice({
       const hIndex = horizontalAxis.indexOf(hAxis);
 
       if (state.gameBoard.find((tile) => tile.id === selectedStone)?.isDama) {
-        // !V loop 1
         for (let i = vIndex - 1; i >= 0; i--) {
           if (
             state.gameBoard.find((tile) => tile.id === verticalAxis[i] + hAxis)
               ?.isFull
           ) {
-            //Todo: 🆗 burada isimlendirme de sıkıntı var => bg-color adı ile currentPlayer adı uyuşmuyor!
             if (
               state.gameBoard.find(
                 (tile) => tile.id === verticalAxis[i] + hAxis
@@ -38,13 +36,12 @@ const checkerSlice = createSlice({
               !state.gameBoard.find(
                 (tile) => tile.id === verticalAxis[i - 1] + hAxis
               )?.isFull
-            ) {
+            )
               state.movableTiles.push({
                 moveTo: verticalAxis[i - 1] + hAxis,
                 delete: verticalAxis[i] + hAxis,
               });
-              break;
-            }
+            break;
           } else {
             state.movableTiles.push({
               moveTo: verticalAxis[i] + hAxis,
@@ -52,14 +49,11 @@ const checkerSlice = createSlice({
             });
           }
         }
-
-        // !V loop 2
         for (let i = vIndex + 1; i <= 7; i++) {
           if (
             state.gameBoard.find((tile) => tile.id === verticalAxis[i] + hAxis)
               ?.isFull
           ) {
-            //Todo: 🆗 burada isimlendirme de sıkıntı var => bg-color adı ile currentPlayer adı uyuşmuyor!
             if (
               state.gameBoard.find(
                 (tile) => tile.id === verticalAxis[i] + hAxis
@@ -67,13 +61,12 @@ const checkerSlice = createSlice({
               !state.gameBoard.find(
                 (tile) => tile.id === verticalAxis[i + 1] + hAxis
               )?.isFull
-            ) {
+            )
               state.movableTiles.push({
                 moveTo: verticalAxis[i + 1] + hAxis,
                 delete: verticalAxis[i] + hAxis,
               });
-              break;
-            }
+            break;
           } else {
             state.movableTiles.push({
               moveTo: verticalAxis[i] + hAxis,
@@ -81,8 +74,6 @@ const checkerSlice = createSlice({
             });
           }
         }
-
-        // !H loop1
         for (let i = hIndex - 1; i >= 0; i--) {
           if (
             state.gameBoard.find(
@@ -96,13 +87,12 @@ const checkerSlice = createSlice({
               !state.gameBoard.find(
                 (tile) => tile.id === vAxis + horizontalAxis[i - 1]
               )?.isFull
-            ) {
+            )
               state.movableTiles.push({
                 moveTo: vAxis + horizontalAxis[i - 1],
                 delete: vAxis + horizontalAxis[i],
               });
-              break;
-            }
+            break;
           } else {
             state.movableTiles.push({
               moveTo: vAxis + horizontalAxis[i],
@@ -110,8 +100,6 @@ const checkerSlice = createSlice({
             });
           }
         }
-
-        // !H loop1
         for (let i = hIndex + 1; i <= 7; i++) {
           if (
             state.gameBoard.find(
@@ -121,17 +109,16 @@ const checkerSlice = createSlice({
             if (
               state.gameBoard.find(
                 (tile) => tile.id === vAxis + horizontalAxis[i]
-              )?.stoneColor !== state.player &&
+              )?.stoneColor !== state.currentPlayer &&
               !state.gameBoard.find(
                 (tile) => tile.id === vAxis + horizontalAxis[i + 1]
               )?.isFull
-            ) {
+            )
               state.movableTiles.push({
                 moveTo: vAxis + horizontalAxis[i + 1],
                 delete: vAxis + horizontalAxis[i],
               });
-              break;
-            }
+            break;
           } else {
             state.movableTiles.push({
               moveTo: vAxis + horizontalAxis[i],
@@ -140,32 +127,31 @@ const checkerSlice = createSlice({
           }
         }
       } else {
-        if (state.currentPlayer === "white" && vAxis !== 8) {
-          const frontTile = state.gameBoard.find(
-            (tile) => tile.id === verticalAxis[vIndex - 1] + hAxis
-          );
-          const nextTile = state.gameBoard.find(
-            (tile) => tile.id === verticalAxis[vIndex - 2] + hAxis
-          );
-
-          if (frontTile?.isFull) {
-            if (
-              frontTile.stoneColor !== state.currentPlayer &&
-              !nextTile?.isFull
-            ) {
-              state.movableTiles.push({
-                moveTo: verticalAxis[vIndex - 2] + hAxis,
-                delete: verticalAxis[vIndex - 1] + hAxis,
-              });
-            } else {
+        if (state.currentPlayer === "white") {
+          if (vAxis !== "8") {
+            const frontTile = state.gameBoard.find(
+              (tile) => tile.id === verticalAxis[vIndex - 1] + hAxis
+            );
+            const nextTile = state.gameBoard.find(
+              (tile) => tile.id === verticalAxis[vIndex - 2] + hAxis
+            );
+            if (frontTile?.isFull) {
+              if (
+                frontTile.stoneColor !== state.currentPlayer &&
+                !nextTile?.isFull
+              )
+                state.movableTiles.push({
+                  moveTo: verticalAxis[vIndex - 2] + hAxis,
+                  delete: verticalAxis[vIndex - 1] + hAxis,
+                });
+            } else
               state.movableTiles.push({
                 moveTo: verticalAxis[vIndex - 1] + hAxis,
                 delete: "",
               });
-            }
           }
         } else {
-          if (vAxis !== 1) {
+          if (vAxis !== "1") {
             const backTile = state.gameBoard.find(
               (tile) => tile.id === verticalAxis[vIndex + 1] + hAxis
             );
@@ -176,18 +162,16 @@ const checkerSlice = createSlice({
               if (
                 backTile.stoneColor !== state.currentPlayer &&
                 !nextTile?.isFull
-              ) {
+              )
                 state.movableTiles.push({
                   moveTo: verticalAxis[vIndex + 2] + hAxis,
                   delete: verticalAxis[vIndex + 1] + hAxis,
                 });
-              }
-            } else {
+            } else
               state.movableTiles.push({
                 moveTo: verticalAxis[vIndex + 1] + hAxis,
                 delete: "",
               });
-            }
           }
         }
 
@@ -277,7 +261,7 @@ const checkerSlice = createSlice({
                   state.winnerPlayer = "";
                 }
 
-                state.userBlackScore = state.userBlackScore - 1;
+                state.userBlackScore -= 1;
               } else {
                 if (state.userWhiteScore === 1) {
                   state.winnerPlayer = "black";
@@ -287,7 +271,7 @@ const checkerSlice = createSlice({
                   state.winnerPlayer = "";
                 }
 
-                state.userWhiteScore = state.userWhiteScore - 1;
+                state.userWhiteScore -= 1;
               }
             }
           }
@@ -309,6 +293,8 @@ const checkerSlice = createSlice({
       state.gameBoard = gameBoard;
       state.currentPlayer = "white";
       state.userWhiteScore = 16;
+      state.userBlackScore = 16;
+      state.winnerPlayer = "";
     },
   },
 });

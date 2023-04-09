@@ -4,6 +4,9 @@ import { useSelector } from "react-redux";
 
 const GameArea = () => {
   const currentPlayer = useSelector((state) => state.game.currentPlayer);
+  const userWhiteScore = useSelector((state) => state.game.userWhiteScore);
+  const userBlackScore = useSelector((state) => state.game.userBlackScore);
+  const winnerPlayer = useSelector((state) => state.game.winnerPlayer);
   return (
     <>
       <div className="w-full h-full mt-10 flex justify-between items-center gap-10">
@@ -16,7 +19,7 @@ const GameArea = () => {
             }`}
           >
             <span className="text-2xl uppercase">white</span>-
-            <span className="text-4xl">16</span>
+            <span className="text-4xl">{userWhiteScore}</span>
           </div>
 
           {/* black rock user */}
@@ -27,11 +30,13 @@ const GameArea = () => {
             }`}
           >
             <span className="text-2xl uppercase">black</span>-
-            <span className="text-4xl">16</span>
+            <span className="text-4xl">{userBlackScore}</span>
           </div>
 
           <p className="text-2xl font-semibold uppercase">
-            {currentPlayer}'s turn!
+            {winnerPlayer
+              ? `${winnerPlayer} WIN! 🥳`
+              : `${currentPlayer}'s turn!`}
           </p>
         </div>
 
